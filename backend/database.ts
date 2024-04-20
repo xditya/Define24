@@ -26,10 +26,24 @@ interface AccountSchema {
   year: number;
 }
 
-export function createUser(
+const usersDb = db.collection<AccountSchema>("users");
+
+export async function createUser(
   name: string,
   email: string,
   password: string,
   loc: string,
   year: number
-) {}
+) {
+  if (await usersDb.findOne({ email })) {
+    throw new Error("User already exists");
+  } else {
+    return await usersDb.insertOne({
+      name,
+      email,
+      password,
+      loc,
+      year,
+    });
+  }
+}

@@ -1,5 +1,6 @@
 import config from "./env.ts";
 import { Application, Router } from "oak";
+import { createUser } from "./database.ts";
 
 const router = new Router();
 
@@ -36,7 +37,18 @@ router.post("/register", async (ctx) => {
   ) {
     return (ctx.response.body = { error: "Registration Failed." });
   }
-  // #TODO: create user
+
+  try {
+    await createUser(
+      params.name,
+      params.email,
+      params.password,
+      params.loc,
+      params.year
+    );
+  } catch {
+    return (ctx.response.body = { error: "Registration Failed." });
+  }
   ctx.response.body = { success: true };
 });
 
